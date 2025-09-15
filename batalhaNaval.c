@@ -4,7 +4,7 @@
 // Este código inicial serve como base para o desenvolvimento do sistema de Batalha Naval.
 // Nível Novato - Posicionamento dos Navios (um horizontal e um vertical); inicialização do tabuleiro 10x10.
 
-// LEGENDA: 0 - Água | 3 - Navio
+// LEGENDA: 0 - Água | 3 - Navio | 1 - Habilidades
 
 // Definindo uma constante para o tamanho do tabuleiro
 #define LIN 10
@@ -30,19 +30,18 @@ void exibirTabuleiro(int tabuleiro[LIN][COL]){
 }
 
 int main() {
+    // Variáveis auxiliares
+    int linha, coluna, i;
+
     // Inicialização do tabuleiro
-    int tabuleiro[LIN][COL] = {
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-    };
+    int tabuleiro[LIN][COL];
+
+    for (linha = 0; linha < LIN; linha++){
+        for (coluna = 0; coluna < COL; coluna++){
+            tabuleiro[linha][coluna] = 0;
+        }
+    }
+
     // Inicialização dos navios e definição de suas coordenadas
     int navioUm[3] = {3, 3, 3};
     int navioDois[3] = {3, 3, 3};
@@ -58,10 +57,8 @@ int main() {
     int linhaNavioQuatro = 7;
     int colunaNavioQuatro = 3;
 
-    // Variáveis auxiliares
-    int linha, coluna, i;
-
     // Mensagem de entrada
+    printf("LEGENDA: 0 - Água | 3 - Navio | 1 - Habilidades\n\n");
     printf("Alto lá, marujo! Uma batalha naval nos aguarda!\n");
     printf("Vamos posicionar nossos navios!\n\n");
 
@@ -171,6 +168,93 @@ int main() {
     // Exibição do tabuleiro com os navios posicionados (representados por 3)
     printf("Muito bem, marinheiro! Vamos ver como ficaram nossas belezuras em alto mar!\n\n");
     exibirTabuleiro(tabuleiro);
+
+    // Inicialização das habilidades e de suas posições
+    int habCone[5][5];
+
+    for (linha = 0; linha < 5; linha++){
+        for (coluna = 0; coluna < 5; coluna++){
+            if (linha == 1 && coluna == 2 ||
+            linha == 2 && (coluna >= 1 && coluna <= 3) ||
+            linha == 3){
+                habCone[linha][coluna] = 1;
+            } else {
+                habCone[linha][coluna] = 0;
+            }
+        }
+    }
+
+    int habCruz[5][5];
+
+    for (linha = 0; linha < 5; linha++){
+        for (coluna = 0; coluna < 5; coluna++){
+            if (linha == 2 || coluna == 2){
+                habCruz[linha][coluna] = 1;
+            } else {
+                habCruz[linha][coluna] = 0;
+            }
+        }
+    }
+
+    int habOcta[5][5];
+
+    for (linha = 0; linha < 5; linha++){
+        for (coluna = 0; coluna < 5; coluna++){
+            if (coluna == 2 ||
+                linha == 2 ||
+                linha == 1 && (coluna >= 1 && coluna <= 3) ||
+                linha == 3 && (coluna >= 1 && coluna <= 3)){
+                habOcta[linha][coluna] = 1;
+            } else {
+                habOcta[linha][coluna] = 0;
+            }
+        }
+    }
+
+    int linhaCone = 1;
+    int colunaCone = 4;
+    int linhaCruz = 3;
+    int colunaCruz = 0;
+    int linhaOcta = 5;
+    int colunaOcta = 5;
+
+    // Aplicando habilidades
+    for (linha = 0; linha < 5; linha++) {
+        for (coluna = 0; coluna < 5; coluna++){
+            if (habCone[linha][coluna] == 1) { // Copia apenas as casas com as habilidades, evitando sobrepor elementos do tabuleiro com água
+                if (linhaCone + 5 <= 10 && colunaCone + 5 <= 10) { // Verifica se cabe no tabuleiro
+                    tabuleiro[linhaCone + linha][colunaCone + coluna] = habCone[linha][coluna];
+                }
+            }            
+        }
+    };
+
+    for (linha = 0; linha < 5; linha++) {
+        for (coluna = 0; coluna < 5; coluna++){
+            if (habCruz[linha][coluna] == 1) {
+                if (linhaCruz + 5 <= 10 && colunaCruz + 5 <= 10) {
+                    tabuleiro[linhaCruz + linha][colunaCruz + coluna] = habCruz[linha][coluna];
+                }
+            }            
+        }
+    };
+
+    for (linha = 0; linha < 5; linha++) {
+        for (coluna = 0; coluna < 5; coluna++){
+            if (habOcta[linha][coluna] == 1) {
+                if (linhaOcta + 5 <= 10 && colunaOcta + 5 <= 10) {
+                    tabuleiro[linhaOcta + linha][colunaOcta + coluna] = habOcta[linha][coluna];
+                }
+            }            
+        }
+    };
+
+    // Exibição do tabuleiro após habilidades
+    printf("Prepare-se, marujo, o inimigo irá atacar!\n\n");
+
+    exibirTabuleiro(tabuleiro);
+
+    printf("Um de nossos navios está no fundo do oceano agora, mas todos os outros ainda estão de pé!");
 
     return 0;
 }
